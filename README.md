@@ -12,5 +12,6 @@ Students are expected to:
 Student Info
 =======================
 
-* Name: MyName
+* Name: Nguyễn Huy Hùng
+* ID: M23.ICT.007
 
