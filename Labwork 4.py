@@ -1,4 +1,5 @@
 import random
+import math
 
 class Layer:
     def __init__(self):
@@ -21,26 +22,14 @@ class Dense(Layer):
         self.output = output
         return output
 
-    def backward(self, output_grad, learning_rate):
-        input_grad = [0] * len(self.input)
-        for i in range(len(self.input)):
-            for j in range(len(output_grad)):
-                input_grad[i] += output_grad[j] * self.weights[i][j]
-            for j in range(len(output_grad)):
-                self.weights[i][j] -= learning_rate * output_grad[j] * self.input[i]
-        for i in range(len(output_grad)):
-            self.bias[i] -= learning_rate * output_grad[i]
-        return input_grad
 
 
-class ReLU(Layer):
+class Sigmoid(Layer):
     def forward(self, input):
         self.input = input
-        self.output = [max(0, x) for x in input]
+        self.output = [1 / (1 + math.exp(-x)) for x in input]
         return self.output
 
-    def backward(self, output_grad, learning_rate):
-        return [output_grad[i] if self.input[i] > 0 else 0 for i in range(len(output_grad))]
 
 class NeuralNetwork:
     def __init__(self, layers):
@@ -50,16 +39,11 @@ class NeuralNetwork:
         for layer in self.layers:
             input = layer.forward(input)
         return input
-
-    def backward(self, output_grad, learning_rate):
-        for layer in reversed(self.layers):
-            output_grad = layer.backward(output_grad, learning_rate)
-        return output_grad
 layers = [
     Dense(input_size=2, output_size=2),  
-    ReLU(),                              
+    Sigmoid(),                              
     Dense(input_size=2, output_size=1),  
-    ReLU()                               
+    Sigmoid()                               
 ]
 
 model = NeuralNetwork(layers)
@@ -77,14 +61,6 @@ for epoch in range(epochs):
         # Forward pass
         output = model.forward(X[i])
         
-        loss = (output[0] - y[i]) ** 2
-        total_loss += loss
-        
-        output_grad = [2 * (output[0] - y[i])] 
-        model.backward(output_grad, learning_rate)
-    
-    if epoch % 1000 == 0:
-        print(f"Epoch {epoch}/{epochs}, Average Loss: {total_loss / len(X)}")
 
 print("\nTesting the trained model:")
 for i in range(len(X)):
