@@ -15,3 +15,4 @@ Student Info
 * Name: Nguyễn Huy Hùng
 * ID: M23.ICT.007
 
+You can check CNN from scratch in folder for final exercise .
